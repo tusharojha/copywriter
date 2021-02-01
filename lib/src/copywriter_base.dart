@@ -4,10 +4,15 @@
 import 'dart:convert';
 import 'dart:io';
 
-Stream<File> filesWithoutCopyright(Stream<File> inputStream, String copyright) async* {
+Stream<File> filesWithoutCopyright(
+    Stream<File> inputStream, String copyright) async* {
   await for (var file in inputStream) {
     var firstThreeLines = await _firstThreeLines(file);
-    if (firstThreeLines != copyright) {
+    var exp = RegExp('[0-9]+');
+    if (firstThreeLines
+            .replaceAll(exp, '')
+            .compareTo(copyright.replaceAll(exp, '')) >
+        0) {
       yield file;
     }
   }
